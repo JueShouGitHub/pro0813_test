@@ -1,6 +1,6 @@
 name: bubble_pop
 description: "Bubble Pop neon ocean game."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0+1
 
 environment:
@@ -11,6 +11,16 @@ dependencies:
     sdk: flutter
   flame: ^1.18.0
   dio: ^5.11.0
+  package_info_plus: ^10.2.1
+  device_info_plus: ^13.2.0
+  android_play_install_referrer: ^0.4.0
+  flutter_timezone: ^5.1.0
+  flutter_inappwebview:
+    git:
+      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
+      ref: master
+      path: flutter_inappwebview
+  advertising_id: ^2.7.1
 
 dev_dependencies:
   flutter_test:
