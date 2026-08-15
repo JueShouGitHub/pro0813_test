@@ -11,9 +11,11 @@ dependencies:
     sdk: flutter
   flame: ^1.18.0
   dio: ^5.11.0
+  pretty_dio_logger: ^1.4.0
   package_info_plus: ^10.2.1
   device_info_plus: ^13.2.0
-  android_play_install_referrer: ^0.4.0
+  android_id: ^0.5.2+1
+  play_install_referrer: ^0.5.0
   flutter_timezone: ^5.1.0
   flutter_inappwebview:
     git:
@@ -21,6 +23,9 @@ dependencies:
       ref: master
       path: flutter_inappwebview
   advertising_id: ^2.7.1
+  adjust_sdk: ^5.7.1
+  appsflyer_sdk: ^6.18.1
+  onesignal_flutter: ^5.6.7
 
 dev_dependencies:
   flutter_test:
